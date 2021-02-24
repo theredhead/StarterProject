@@ -1,0 +1,19 @@
+<mat-card>
+  <mat-card-header>
+    <img
+      src="/assets/images/icons/about.png"
+      alt="about"
+      matCardAvatar
+      class="not-rounded"
+    />
+    <mat-card-title
+      >About {{ environment.product.name }} v{{
+        environment.product.version
+      }}</mat-card-title
+    >
+    <mat-card-subtitle>{{ environment.product.description }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div [innerText]="'Hello, World!'"></div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,22 @@
+<mat-drawer-container
+  [hasBackdrop]="hasBackdrop"
+  style="background: transparent"
+>
+  <mat-drawer
+    #primaryDrawer
+    [mode]="primaryDrawerMode"
+    [position]="primaryDrawerPosition"
+  >
+    <ng-content select="[role='primary-drawer-content']"></ng-content>
+  </mat-drawer>
+  <mat-drawer
+    #secondaryDrawer
+    [mode]="secondaryDrawerMode"
+    [position]="secondaryDrawerPosition"
+  >
+    <ng-content select="[role='secondary-drawer-content']"></ng-content>
+  </mat-drawer>
+  <mat-drawer-content>
+    <ng-content></ng-content>
+  </mat-drawer-content>
+</mat-drawer-container>

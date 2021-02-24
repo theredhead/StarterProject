@@ -1,0 +1,8 @@
+<footer>
+  <div class="copyright-notice">
+    {{ environment.product.copyrightNotice }}
+  </div>
+  <ng-container *ngIf="!environment.production"
+    ><strong>(dev build)</strong></ng-container
+  >
+</footer>

@@ -1,3 +1,6 @@
+import { product } from './product';
+
 export const environment = {
-  production: true
+  product,
+  production: true,
 };

@@ -1,0 +1,14 @@
+<mat-list>
+  <mat-list-item class="navigation-item" *ngFor="let item of items" matRipple (click)="activate(item)">
+    <ng-container [ngSwitch]="iconType(item)">
+      <ng-container *ngSwitchCase="'material'">
+        <mat-icon>{{ item.icon }}</mat-icon>
+      </ng-container>
+      <ng-container *ngSwitchCase="'url'">
+        <img src="{{ item.icon }}" />
+      </ng-container>
+      <span *ngSwitchDefault></span>
+    </ng-container>
+    <mat-label>{{ item.caption }}</mat-label>
+  </mat-list-item>
+</mat-list>

@@ -1,0 +1,25 @@
+<layout-sidebar-drawers #layout>
+  <div role="primary-drawer-content">
+    <app-application-navigation></app-application-navigation>
+  </div>
+  <div role="secondary-drawer-content">secondary drawer...</div>
+  <mat-card>
+    <mat-card-header>
+      <img src="/favicon.ico" alt="home" matCardAvatar class="not-rounded" />
+      <mat-card-title>Welcome to {{ environment.product.name }}</mat-card-title>
+      <mat-card-subtitle>{{
+        environment.product.description
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Main content -->
+      <button mat-button (click)="layout.primaryDrawer.toggle()">
+        Toggle primary drawer
+      </button>
+      <button mat-button (click)="layout.secondaryDrawer.toggle()">
+        Toggle secondary drawer
+      </button>
+      <button mat-button (click)="layout.toggle()">Toggle both drawers</button>
+    </mat-card-content>
+  </mat-card>
+</layout-sidebar-drawers>
