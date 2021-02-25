@@ -1,10 +1,22 @@
 .navigation-items {
   display: flex;
   flex-direction: column;
+  min-width: 150px;
 
   .navigation-item {
     cursor: pointer;
     margin: 2px;
-    text-align: left;
+    display: grid;
+    grid-template-areas: "icon label";
+    grid-template-columns: 40px 1fr;
+
+    mat-icon {
+      grid-area: "icon";
+    }
+
+    mat-label {
+      margin-left: 1em;
+      grid-area: "label";
+    }
   }
 }

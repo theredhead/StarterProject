@@ -14,23 +14,37 @@ export class HomePageComponent implements OnInit, AfterViewInit {
 
   environment = environment;
   navigationDrawerIsOpen$: Observable<boolean>;
+  asideDrawerIsOpen$: Observable<boolean>;
+
   navigationDrawerIsInitiallyOpen: boolean;
+  asideDrawerIsInitiallyOpen: boolean;
 
   toggleNavigationDrawer(): void {
     this.navigationService.toggleNavigationDrawer();
   }
+  toggleAsideDrawer(): void {
+    this.navigationService.toggleAsideDrawer();
+  }
+
   constructor(private navigationService: NavigationService) {
     this.navigationDrawerIsInitiallyOpen =
       navigationService.navigationDrawerIsInitiallyOpen;
+    this.asideDrawerIsInitiallyOpen =
+      navigationService.asideDrawerIsInitiallyOpen;
+
     this.navigationDrawerIsOpen$ = this.navigationService.navigationDrawerIsOpen$.asObservable();
+    this.asideDrawerIsOpen$ = this.navigationService.asideDrawerIsOpen$.asObservable();
   }
 
   ngOnInit(): void {}
   ngAfterViewInit(): void {
     this.navigationDrawerIsOpen$.subscribe((open) => {
+      open ? this.layout.openPrimaryDrawer() : this.layout.closePrimaryDrawer();
+    });
+    this.asideDrawerIsOpen$.subscribe((open) => {
       open
-        ? this.layout.primaryDrawer.open()
-        : this.layout.primaryDrawer.close();
+        ? this.layout.openSecondaryDrawer()
+        : this.layout.closeSecondaryDrawer();
     });
   }
 }

@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ContentChild,
   ElementRef,
@@ -31,18 +30,20 @@ export class SidebarDrawersComponent {
   @Input() primaryDrawerInitiallyOpen = false;
   @Input() secondaryDrawerInitiallyOpen = false;
 
-  get primaryDrawerHasContent(): boolean {
-    return this.primaryDrawerContent?.nativeElement != null;
+  openPrimaryDrawer(): void {
+    this.primaryDrawer.open();
   }
-  get secondaryDrawerHasContent(): boolean {
-    return this.secondaryDrawerContent?.nativeElement != null;
+  closePrimaryDrawer(): void {
+    this.primaryDrawer.close();
   }
 
-  toggle(): void {
-    console.log('toggle...');
-    this.primaryDrawer.toggle();
-    this.secondaryDrawer.toggle();
+  openSecondaryDrawer(): void {
+    this.secondaryDrawer.open();
   }
+  closeSecondaryDrawer(): void {
+    this.secondaryDrawer.close();
+  }
+
   constructor(readonly elementRef: ElementRef<HTMLElement>) {
     this.elementRef.nativeElement.classList.add('layout');
   }
