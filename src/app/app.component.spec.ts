@@ -1,15 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { ApplicationFooterComponent } from './components/application-footer/application-footer.component';
+import { ApplicationHeaderComponent } from './components/application-header/application-header.component';
+import { MaterialComponentsModule } from './modules/material-components.module';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
+      imports: [RouterTestingModule, MaterialComponentsModule],
       declarations: [
-        AppComponent
+        AppComponent,
+        ApplicationHeaderComponent,
+        ApplicationFooterComponent,
       ],
     }).compileComponents();
   });
@@ -24,12 +27,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('StarterProject');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('StarterProject app is running!');
   });
 });

@@ -1,15 +1,44 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { LocalStorageService } from '../local-storage.service';
 
+const NAV_DRAWER_STATE_KEY = 'navigation-open';
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  navigationItems = new BehaviorSubject<NavigationItem[]>(
+  constructor(
+    private router: Router,
+    private localStorageService: LocalStorageService
+  ) {
+    this.navigationDrawerIsInitiallyOpen = this.localStorageService.get<boolean>(
+      NAV_DRAWER_STATE_KEY,
+      true
+    );
+
+    this.navigationDrawerIsOpen$.next(
+      this.localStorageService.get<boolean>(
+        NAV_DRAWER_STATE_KEY,
+        this.navigationDrawerIsInitiallyOpen
+      )
+    );
+
+    this.navigationDrawerIsOpen$.subscribe((nextState) =>
+      this.localStorageService.set<boolean>(NAV_DRAWER_STATE_KEY, nextState)
+    );
+  }
+  readonly navigationDrawerIsOpen$ = new BehaviorSubject<boolean>(true);
+  readonly navigationItems$ = new BehaviorSubject<NavigationItem[]>(
     DEFAULT_NAVIGATION_ITEMS
   );
-  constructor(private router: Router) {}
+
+  public readonly navigationDrawerIsInitiallyOpen;
+
+  toggleNavigationDrawer(): void {
+    const currentState = this.navigationDrawerIsOpen$.getValue();
+    this.navigationDrawerIsOpen$.next(!currentState);
+  }
 
   activate(item: NavigationItem): void {
     if (item?.action) {
@@ -49,18 +78,18 @@ export const DEFAULT_NAVIGATION_ITEMS: NavigationItem[] = [
     caption: 'Support',
     icon: 'support',
     iconType: 'material',
-    routerLink: ['/support'],
+    action: () => alert('Not implemented'),
   },
   {
     caption: 'Contact',
     icon: 'mail_outline',
     iconType: 'material',
-    routerLink: ['/contact'],
+    action: () => alert('Not implemented'),
   },
   {
     caption: 'Help',
     icon: 'help_outline',
     iconType: 'material',
-    routerLink: ['/help'],
+    action: () => alert('Not implemented'),
   },
 ];

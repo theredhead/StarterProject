@@ -28,6 +28,8 @@ export class SidebarDrawersComponent {
   @Input() secondaryDrawerPosition: DrawerPosition = 'end';
   @Input() primaryDrawerMode: DrawerMode = 'side';
   @Input() secondaryDrawerMode: DrawerMode = 'side';
+  @Input() primaryDrawerInitiallyOpen = false;
+  @Input() secondaryDrawerInitiallyOpen = false;
 
   get primaryDrawerHasContent(): boolean {
     return this.primaryDrawerContent?.nativeElement != null;

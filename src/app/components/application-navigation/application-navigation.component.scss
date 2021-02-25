@@ -1,3 +1,10 @@
-.navigation-item {
-  cursor: pointer;
+.navigation-items {
+  display: flex;
+  flex-direction: column;
+
+  .navigation-item {
+    cursor: pointer;
+    margin: 2px;
+    text-align: left;
+  }
 }

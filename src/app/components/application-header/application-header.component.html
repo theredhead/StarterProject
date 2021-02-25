@@ -14,6 +14,17 @@
       <button mat-button [routerLink]="['about']" [routerLinkActive]="'active'">
         About
       </button>
+
+      <span style="flex: 1 1 auto"></span>
+
+      <button
+        mat-icon-button
+        title="Theme switch"
+        (click)="themeService.toggle()"
+      >
+        <mat-icon *ngIf="themeService.isDarkMode">dark_mode</mat-icon>
+        <mat-icon *ngIf="!themeService.isDarkMode">light_mode</mat-icon>
+      </button>
     </mat-toolbar-row>
   </mat-toolbar>
 </header>

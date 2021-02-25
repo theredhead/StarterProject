@@ -6,6 +6,7 @@
     #primaryDrawer
     [mode]="primaryDrawerMode"
     [position]="primaryDrawerPosition"
+    [opened]="primaryDrawerInitiallyOpen"
   >
     <ng-content select="[role='primary-drawer-content']"></ng-content>
   </mat-drawer>
@@ -13,6 +14,7 @@
     #secondaryDrawer
     [mode]="secondaryDrawerMode"
     [position]="secondaryDrawerPosition"
+    [opened]="secondaryDrawerInitiallyOpen"
   >
     <ng-content select="[role='secondary-drawer-content']"></ng-content>
   </mat-drawer>

@@ -3,7 +3,6 @@ import {
   NavigationItem,
   NavigationService,
 } from 'src/app/services/application/navigation.service';
-
 @Component({
   selector: 'app-application-navigation',
   templateUrl: './application-navigation.component.html',
@@ -12,7 +11,8 @@ import {
 export class ApplicationNavigationComponent implements OnInit {
   items: NavigationItem[] = [];
 
-  constructor(private navigationService: NavigationService) {}
+  constructor(readonly navigationService: NavigationService) {}
+
   iconType(item: NavigationItem): string {
     return item?.iconType ?? 'material';
   }
@@ -20,7 +20,7 @@ export class ApplicationNavigationComponent implements OnInit {
     this.navigationService.activate(item);
   }
   ngOnInit(): void {
-    this.navigationService.navigationItems.subscribe(
+    this.navigationService.navigationItems$.subscribe(
       (items) => (this.items = items)
     );
   }

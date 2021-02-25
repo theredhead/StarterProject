@@ -1,5 +1,10 @@
-<mat-list>
-  <mat-list-item class="navigation-item" *ngFor="let item of items" matRipple (click)="activate(item)">
+<div class="navigation-items">
+  <button
+    mat-button
+    class="navigation-item"
+    *ngFor="let item of items"
+    (click)="activate(item)"
+  >
     <ng-container [ngSwitch]="iconType(item)">
       <ng-container *ngSwitchCase="'material'">
         <mat-icon>{{ item.icon }}</mat-icon>
@@ -10,5 +15,5 @@
       <span *ngSwitchDefault></span>
     </ng-container>
     <mat-label>{{ item.caption }}</mat-label>
-  </mat-list-item>
-</mat-list>
+  </button>
+</div>

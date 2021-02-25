@@ -9,9 +9,8 @@ const routes: Routes = [
   {
     path: '',
     component: HomePageComponent,
+    children: [{ path: 'about', component: AboutPageComponent }],
   },
-
-  { path: 'about', component: AboutPageComponent },
   { path: '**', component: NotFoundPageComponent },
 ];
 
