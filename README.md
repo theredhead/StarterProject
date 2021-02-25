@@ -1,5 +1,7 @@
 # StarterProject
 
+**TLDR**: Demo available http://www.public-void.net/
+
 This is intended to be a quickstart project that already includes some basic amenities.
 
 What is included:
