@@ -1,20 +1,16 @@
-<layout-sidebar-drawers
-  #layout
-  [primaryDrawerInitiallyOpen]="navigationDrawerIsInitiallyOpen"
-  [secondaryDrawerInitiallyOpen]="asideDrawerIsInitiallyOpen"
->
+<layout-sidebar-drawers #layout>
   <div role="primary-drawer-content">
     <app-application-navigation></app-application-navigation>
   </div>
   <div role="secondary-drawer-content">Nothing to see here</div>
 
   <mat-toolbar>
-    <button mat-button (click)="toggleNavigationDrawer()">
+    <button mat-button (click)="layout.togglePrimaryDrawer()">
       <mat-icon>menu</mat-icon>
     </button>
 
     <span style="flex: 1 1 auto"></span>
-    <button mat-button (click)="toggleAsideDrawer()">
+    <button mat-button (click)="layout.toggleSecondaryDrawer()">
       <mat-icon>menu</mat-icon>
     </button>
   </mat-toolbar>
