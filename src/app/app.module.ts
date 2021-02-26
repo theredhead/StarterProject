@@ -14,6 +14,7 @@ import { LayoutsModule } from './modules/layouts/layouts.module';
 import { ApplicationNavigationComponent } from './components/application-navigation/application-navigation.component';
 import { NotificationsService } from './services/notifications.service';
 import { NotificationsToolButtonComponent } from './components/notifications-tool-button/notifications-tool-button.component';
+import { VarDumpComponent } from './components/var-dump/var-dump.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { NotificationsToolButtonComponent } from './components/notifications-too
     ApplicationFooterComponent,
     ApplicationNavigationComponent,
     NotificationsToolButtonComponent,
+    VarDumpComponent,
   ],
   imports: [
     BrowserModule,
