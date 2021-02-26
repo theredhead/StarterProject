@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { LocalStorageService } from '../local-storage.service';
+import { NotificationsService } from '../notifications.service';
 
 const NAVIGATION_DRAWER_KEY = 'navigation-drawer-open';
 const ASIDE_DRAWER_KEY = 'aside-drawer-open';
@@ -9,8 +10,19 @@ const ASIDE_DRAWER_KEY = 'aside-drawer-open';
   providedIn: 'root',
 })
 export class NavigationService {
+  readonly navigationDrawerIsOpen$ = new BehaviorSubject<boolean>(true);
+  readonly asideDrawerIsOpen$ = new BehaviorSubject<boolean>(true);
+
+  readonly navigationItems$ = new BehaviorSubject<NavigationItem[]>(
+    DEFAULT_NAVIGATION_ITEMS
+  );
+
+  public readonly navigationDrawerIsInitiallyOpen;
+  public readonly asideDrawerIsInitiallyOpen;
+
   constructor(
     private router: Router,
+    private notificationsService: NotificationsService,
     private localStorageService: LocalStorageService
   ) {
     this.navigationDrawerIsInitiallyOpen = this.localStorageService.get<boolean>(
@@ -32,15 +44,6 @@ export class NavigationService {
       this.localStorageService.set<boolean>(ASIDE_DRAWER_KEY, nextState);
     });
   }
-  readonly navigationDrawerIsOpen$ = new BehaviorSubject<boolean>(true);
-  readonly asideDrawerIsOpen$ = new BehaviorSubject<boolean>(true);
-
-  readonly navigationItems$ = new BehaviorSubject<NavigationItem[]>(
-    DEFAULT_NAVIGATION_ITEMS
-  );
-
-  public readonly navigationDrawerIsInitiallyOpen;
-  public readonly asideDrawerIsInitiallyOpen;
 
   toggleNavigationDrawer(): void {
     const currentState = this.navigationDrawerIsOpen$.getValue();
@@ -53,12 +56,16 @@ export class NavigationService {
   }
 
   activate(item: NavigationItem): void {
+    this.notificationsService.info(`Navigating for "${item.caption}".`);
+
     if (item?.action) {
       item.action();
     } else if (item?.routerLink) {
       this.router.navigate(item.routerLink);
     } else {
-      console.error('Invalid NavigationItem, unable to activate: ', item);
+      this.notificationsService.error(
+        `Invalid NavigationItem, unable to activate: ${item.caption}`
+      );
     }
   }
 }

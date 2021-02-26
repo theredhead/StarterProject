@@ -10,5 +10,4 @@ export class SerializerService {
   deserialize<T>(serialized: string): T {
     return JSON.parse(serialized) as T;
   }
-  constructor() {}
 }

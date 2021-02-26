@@ -13,8 +13,21 @@ export class ThemeService {
   private body!: HTMLElement;
   private readonly themeClasses = [];
 
-  private clearThemeClasses(): void {
-    this.body.classList.remove(LIGHT_MODE_CSS_CLASS, DARK_MODE_CSS_CLASS);
+  get isDarkMode(): boolean {
+    return this.body.classList.contains(DARK_MODE_CSS_CLASS);
+  }
+
+  get isLightMode(): boolean {
+    return !this.isDarkMode;
+  }
+
+  constructor(private localStorageService: LocalStorageService) {
+    const body = document.getElementsByTagName('body').item(0);
+    if (!body) {
+      throw new Error('Unable to get body element.');
+    }
+    this.body = body;
+    this.restoreThemeFromStorage();
   }
 
   toggle(): void {
@@ -36,22 +49,6 @@ export class ThemeService {
     this.body.classList.add(LIGHT_MODE_CSS_CLASS);
   }
 
-  get isDarkMode(): boolean {
-    return this.body.classList.contains(DARK_MODE_CSS_CLASS);
-  }
-
-  get isLightMode(): boolean {
-    return !this.isDarkMode;
-  }
-
-  constructor(private localStorageService: LocalStorageService) {
-    const body = document.getElementsByTagName('body').item(0);
-    if (!body) {
-      throw new Error('Unable to get body element.');
-    }
-    this.body = body;
-    this.restoreThemeFromStorage();
-  }
   restoreThemeFromStorage(): void {
     const dark = this.localStorageService.get(THEME_STORAGE_KEY, false);
     if (dark) {
@@ -59,5 +56,9 @@ export class ThemeService {
     } else {
       this.setLightMode();
     }
+  }
+
+  private clearThemeClasses(): void {
+    this.body.classList.remove(LIGHT_MODE_CSS_CLASS, DARK_MODE_CSS_CLASS);
   }
 }

@@ -8,6 +8,5 @@ import { ThemeService } from 'src/app/services/theme.service';
 })
 export class ApplicationHeaderComponent implements OnInit {
   constructor(readonly themeService: ThemeService) {}
-
   ngOnInit(): void {}
 }

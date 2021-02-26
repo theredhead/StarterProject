@@ -19,13 +19,6 @@ export class HomePageComponent implements OnInit, AfterViewInit {
   navigationDrawerIsInitiallyOpen: boolean;
   asideDrawerIsInitiallyOpen: boolean;
 
-  toggleNavigationDrawer(): void {
-    this.navigationService.toggleNavigationDrawer();
-  }
-  toggleAsideDrawer(): void {
-    this.navigationService.toggleAsideDrawer();
-  }
-
   constructor(private navigationService: NavigationService) {
     this.navigationDrawerIsInitiallyOpen =
       navigationService.navigationDrawerIsInitiallyOpen;
@@ -36,15 +29,32 @@ export class HomePageComponent implements OnInit, AfterViewInit {
     this.asideDrawerIsOpen$ = this.navigationService.asideDrawerIsOpen$.asObservable();
   }
 
+  toggleNavigationDrawer(): void {
+    this.navigationService.toggleNavigationDrawer();
+  }
+  toggleAsideDrawer(): void {
+    this.navigationService.toggleAsideDrawer();
+  }
+
   ngOnInit(): void {}
   ngAfterViewInit(): void {
+    const iif = (bool: boolean, yes: () => void, no: () => void) => {
+      if (bool) {
+        yes();
+      } else {
+        no();
+      }
+    };
+
     this.navigationDrawerIsOpen$.subscribe((open) => {
-      open ? this.layout.openPrimaryDrawer() : this.layout.closePrimaryDrawer();
+      iif(open, this.layout.openPrimaryDrawer, this.layout.closePrimaryDrawer);
     });
     this.asideDrawerIsOpen$.subscribe((open) => {
-      open
-        ? this.layout.openSecondaryDrawer()
-        : this.layout.closeSecondaryDrawer();
+      iif(
+        open,
+        this.layout.openSecondaryDrawer,
+        this.layout.closeSecondaryDrawer
+      );
     });
   }
 }

@@ -1,0 +1,39 @@
+<ng-container>
+  <button
+    [matMenuTriggerFor]="notificationsMenu"
+    mat-icon-button
+    *ngIf="(notifications.undismissed$ | async)!.length"
+  >
+    <mat-icon
+      [matBadge]="(notifications.undismissed$ | async)!.length"
+      matBadgeColor="accent"
+      >inbox</mat-icon
+    >
+  </button>
+  <mat-menu #notificationsMenu style="width: 200px">
+    <ng-container *ngFor="let item of notifications.undismissed$ | async">
+      <div class="notification-list-item">
+        <div class="icon">
+          <mat-icon>{{ notificationIcon(item.notification) }}</mat-icon>
+        </div>
+        <mat-label>
+          {{ item.notification.message }}
+        </mat-label>
+        <button mat-icon-button (click)="notifications.dismiss(item)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <mat-divider></mat-divider>
+    </ng-container>
+    <div
+      class="notification-list-item"
+      (click)="notifications.dismissAll()"
+      matRipple
+    >
+      <div class="icon">
+        <mat-icon>delete</mat-icon>
+      </div>
+      <mat-label> Clear all </mat-label>
+    </div>
+  </mat-menu>
+</ng-container>

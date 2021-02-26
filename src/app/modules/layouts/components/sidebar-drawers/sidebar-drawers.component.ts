@@ -8,7 +8,7 @@ import {
 import { MatDrawer } from '@angular/material/sidenav';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'layout-sidebar-drawers',
   templateUrl: './sidebar-drawers.component.html',
   styleUrls: ['./sidebar-drawers.component.scss'],
@@ -30,6 +30,10 @@ export class SidebarDrawersComponent {
   @Input() primaryDrawerInitiallyOpen = false;
   @Input() secondaryDrawerInitiallyOpen = false;
 
+  constructor(readonly elementRef: ElementRef<HTMLElement>) {
+    this.elementRef.nativeElement.classList.add('layout');
+  }
+
   openPrimaryDrawer(): void {
     this.primaryDrawer.open();
   }
@@ -42,10 +46,6 @@ export class SidebarDrawersComponent {
   }
   closeSecondaryDrawer(): void {
     this.secondaryDrawer.close();
-  }
-
-  constructor(readonly elementRef: ElementRef<HTMLElement>) {
-    this.elementRef.nativeElement.classList.add('layout');
   }
 }
 

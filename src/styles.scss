@@ -87,3 +87,19 @@ img.mat-card-avatar.not-rounded {
   justify-content: center; // horizontally centers single line items
   text-align: center; // optional, but helps horizontally center text that breaks into multiple lines
 }
+
+.snackbar-panel {
+  &.error {
+    border: solid 2px var(--theme-warn);
+  }
+  &.warning {
+    // border: solid 2px adjust-hue($theme-accent, 30);
+    border: solid 2px adjust-hue($theme-accent, 90);
+  }
+  &.info {
+    border: solid 2px lighten($theme-primary, 10%);
+  }
+  &.success {
+    border: solid 2px var(--theme-primary);
+  }
+}

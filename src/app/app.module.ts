@@ -12,6 +12,8 @@ import { MaterialComponentsModule } from './modules/material-components.module';
 import { ApplicationFooterComponent } from './components/application-footer/application-footer.component';
 import { LayoutsModule } from './modules/layouts/layouts.module';
 import { ApplicationNavigationComponent } from './components/application-navigation/application-navigation.component';
+import { NotificationsService } from './services/notifications.service';
+import { NotificationsToolButtonComponent } from './components/notifications-tool-button/notifications-tool-button.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { ApplicationNavigationComponent } from './components/application-navigat
     ApplicationHeaderComponent,
     ApplicationFooterComponent,
     ApplicationNavigationComponent,
+    NotificationsToolButtonComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,4 +36,8 @@ import { ApplicationNavigationComponent } from './components/application-navigat
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(readonly notificationsService: NotificationsService) {
+    this.notificationsService.overwriteAlertFunction();
+  }
+}

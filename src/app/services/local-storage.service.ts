@@ -5,6 +5,8 @@ import { SerializerService } from './serializer.service';
   providedIn: 'root',
 })
 export class LocalStorageService {
+  constructor(private serializerService: SerializerService) {}
+
   get<T>(key: string, ifNotSet: T): T {
     const raw = localStorage.getItem(key);
     if (raw) {
@@ -15,6 +17,4 @@ export class LocalStorageService {
   set<T>(key: string, value: T): void {
     localStorage.setItem(key, this.serializerService.serialize(value));
   }
-
-  constructor(private serializerService: SerializerService) {}
 }

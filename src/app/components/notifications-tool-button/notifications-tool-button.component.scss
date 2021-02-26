@@ -1,0 +1,10 @@
+.notification-list-item {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: baseline;
+
+  .icon {
+    align-self: center;
+    margin: 0 1em;
+  }
+}
