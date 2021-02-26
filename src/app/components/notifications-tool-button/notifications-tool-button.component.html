@@ -12,21 +12,21 @@
   </button>
   <mat-menu #notificationsMenu style="width: 200px">
     <ng-container *ngFor="let item of notifications.undismissed$ | async">
-      <div class="notification-list-item">
+      <div class="notification-list-item mat-menu-item">
         <div class="icon">
           <mat-icon>{{ notificationIcon(item.notification) }}</mat-icon>
         </div>
         <mat-label>
           {{ item.notification.message }}
         </mat-label>
-        <button mat-icon-button (click)="notifications.dismiss(item)">
+        <div class="icon" (click)="notifications.dismiss(item)" matRipple>
           <mat-icon>clear</mat-icon>
-        </button>
+        </div>
       </div>
-      <mat-divider></mat-divider>
     </ng-container>
+    <mat-divider></mat-divider>
     <div
-      class="notification-list-item"
+      class="notification-list-item mat-menu-item"
       (click)="notifications.dismissAll()"
       matRipple
     >
