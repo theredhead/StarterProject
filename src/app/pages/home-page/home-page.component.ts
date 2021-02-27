@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { SidebarDrawersComponent } from 'src/app/modules/layouts/components/sidebar-drawers/sidebar-drawers.component';
+import { NotificationsService } from 'src/app/services/notifications.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,8 +12,11 @@ export class HomePageComponent {
   @ViewChild(SidebarDrawersComponent) layout!: SidebarDrawersComponent;
 
   environment = environment;
+  notifications$;
 
-  constructor() {}
+  constructor(private notificationsService: NotificationsService) {
+    this.notifications$ = this.notificationsService.notifications$;
+  }
 
   toggleNavigationDrawer(): void {
     this.layout.togglePrimaryDrawer();

@@ -4,9 +4,17 @@ import {
   MatSnackBarRef,
   TextOnlySnackBar,
 } from '@angular/material/snack-bar';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LocalStorageRepository } from './data/localstorage-repository';
+import {
+  AddEntityAction,
+  ModifyEntityAction,
+} from './data/localstorage-repository.actions';
+import { Repository } from './data/repository';
+import { RepositoryAction } from './data/repository-action';
 
+const NOTIFICATIONS_STORAGE_KEY = 'notifications';
 // eslint-disable-next-line no-shadow
 export enum NotificationKind {
   info,
@@ -28,11 +36,13 @@ export class NotificationsService {
   public snackbarDuration = 3000;
 
   readonly undismissed$: Observable<NotificationLogEntry[]>;
-  readonly notifications$ = new BehaviorSubject<NotificationLogEntry[]>([]);
+  readonly notifications$: Observable<NotificationLogEntry[]>;
 
   private originalAlertFunction!: (message: string) => void;
+  private storage = new NotificationsRepository();
 
   constructor(private snackbar: MatSnackBar) {
+    this.notifications$ = this.storage.entities$.asObservable();
     this.undismissed$ = this.notifications$.pipe(
       map((all) => all.filter((single) => !single.dismissed))
     );
@@ -40,11 +50,13 @@ export class NotificationsService {
 
   dismiss(item: NotificationLogEntry): void {
     item.dismissed = true;
-    this.notifications$.next([...this.notifications$.getValue()]);
+    this.storage.performAction(
+      new ModifyEntityAction(item, (a, b) => Object.is(a, b))
+    );
   }
+
   dismissAll(): void {
-    this.notifications$.getValue().forEach((o) => (o.dismissed = true));
-    this.notifications$.next([...this.notifications$.getValue()]);
+    this.storage.performAction(new DissmissAllNotificationAction());
   }
 
   error(message: string, origin?: any): void {
@@ -92,10 +104,10 @@ export class NotificationsService {
         cssClassForNotificationKind(notification.kind),
       ],
     });
-    this.notifications$.next([
-      ...this.notifications$.getValue(),
-      new NotificationLogEntry(notification, ref),
-    ]);
+
+    this.storage.performAction(
+      new AddEntityAction(new NotificationLogEntry(notification))
+    );
   }
 }
 
@@ -103,10 +115,7 @@ export class NotificationLogEntry {
   readonly logDate: Date = new Date();
   dismissed = false;
 
-  constructor(
-    readonly notification: Notification,
-    readonly snackbarReference: MatSnackBarRef<TextOnlySnackBar>
-  ) {}
+  constructor(readonly notification: Notification) {}
 }
 
 const cssClassForNotificationKind = (kind: NotificationKind): string => {
@@ -123,3 +132,31 @@ const cssClassForNotificationKind = (kind: NotificationKind): string => {
       return 'unknown';
   }
 };
+class NotificationsRepository extends LocalStorageRepository<NotificationLogEntry> {
+  readonly localStorageKey = NOTIFICATIONS_STORAGE_KEY;
+}
+
+class DissmissNotificationAction extends RepositoryAction<NotificationLogEntry> {
+  type = '[Dismiss a notification]';
+  constructor(private payload: NotificationLogEntry) {
+    super();
+  }
+  run(
+    data: NotificationLogEntry[],
+    repository: Repository<NotificationLogEntry>
+  ): NotificationLogEntry[] {
+    const updated = [...data];
+    const index = updated.findIndex((o) => Object.is(o, this.payload));
+    updated[index].dismissed = true;
+    return updated;
+  }
+}
+class DissmissAllNotificationAction extends RepositoryAction<NotificationLogEntry> {
+  type = '[Dismiss all notifications]';
+  run(
+    data: NotificationLogEntry[],
+    repository: Repository<NotificationLogEntry>
+  ): NotificationLogEntry[] {
+    return data.map((o) => Object.assign({}, o, { dismissed: true }));
+  }
+}
