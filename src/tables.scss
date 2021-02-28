@@ -1,0 +1,55 @@
+table.themed {
+  margin: 1rem auto;
+  border-collapse: collapse;
+
+  td,
+  th {
+    text-align: left;
+    font-weight: normal;
+    padding: 4px 8px;
+  }
+
+  thead {
+    font-size: 1.05rem;
+
+    th {
+      overflow: hidden;
+      height: 100%;
+      background: var(--theme-accent) 50% / cover;
+
+      div {
+        height: inherit;
+        background: inherit;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-transform: capitalize;
+        filter: invert(1) grayscale(1) contrast(9);
+      }
+    }
+  }
+
+  tbody {
+    font-size: 1rem;
+
+    tr {
+      background-color: rgba(255, 255, 255, 0.9);
+
+      &:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+}
+
+table.themed thead th,
+table.themed.primary thead th {
+  background: var(--theme-primary) 50% / cover !important;
+}
+table.themed.accent thead th {
+  background: var(--theme-accent) 50% / cover !important;
+}
+table.themed.warn thead th {
+  background: var(--theme-warn) 50% / cover !important;
+}
+

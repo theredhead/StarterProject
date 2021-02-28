@@ -24,36 +24,36 @@ export class MySqlDbPool {
     transform: TransformFn | null = null
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.pool.getConnection((err, cn) => {
-        if (err) {
-          console.error('Problem getting connection:', err);
-          reject(err);
-        }
+      // this.pool.getConnection((err, cn) => {
+      //   if (err) {
+      //     console.error('Problem getting connection:', err);
+      //     reject(err);
+      //   }
 
-        cn.query(
-          commandText,
-          params,
-          (
-            error: mysql.MysqlError | null,
-            rows?: any,
-            fields?: mysql.FieldInfo[]
-          ) => {
-            if (error) {
-              console.error('Error with query:', error, {
-                commandText,
-                params,
-              });
-              reject(error);
-            } else {
-              if (transform != null) {
-                resolve(transform(rows, fields));
-              }
-              resolve({ rows, fields });
+      this.pool.query(
+        commandText,
+        params,
+        (
+          error: mysql.MysqlError | null,
+          rows?: any,
+          fields?: mysql.FieldInfo[]
+        ) => {
+          if (error) {
+            console.error('Error with query:', error, {
+              commandText,
+              params,
+            });
+            reject(error);
+          } else {
+            if (transform != null) {
+              resolve(transform(rows, fields));
             }
+            resolve({ rows, fields });
           }
-        );
-      });
+        }
+      );
     });
+    // });
   }
 
   public insert(table: string, obj: RecordSnippet): Promise<any> {

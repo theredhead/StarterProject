@@ -13,6 +13,9 @@ export class VarDumpComponent {
     return Object.keys(this.value);
   }
   get template() {
+    if (this.value == null) {
+      return 'tpl-null';
+    }
     return 'tpl-' + typeof this.value;
   }
   isObject(v: any): boolean {

@@ -1,0 +1,10 @@
+table.editable {
+  tbody {
+    td div:hover {
+      outline-offset: 2pd;
+      outline-width: 4px;
+      outline-color: var(--theme-accent);
+      outline-style: solid;
+    }
+  }
+}

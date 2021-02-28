@@ -15,6 +15,10 @@ import { ApplicationNavigationComponent } from './components/application-navigat
 import { NotificationsService } from './services/notifications.service';
 import { NotificationsToolButtonComponent } from './components/notifications-tool-button/notifications-tool-button.component';
 import { VarDumpComponent } from './components/var-dump/var-dump.component';
+import { BackendTestPageComponent } from './pages/backend-test-page/backend-test-page.component';
+import { HttpClientModule } from '@angular/common/http';
+import { GridComponent } from './components/grid/grid.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,11 +31,15 @@ import { VarDumpComponent } from './components/var-dump/var-dump.component';
     ApplicationNavigationComponent,
     NotificationsToolButtonComponent,
     VarDumpComponent,
+    BackendTestPageComponent,
+    GridComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
+    FormsModule,
     MaterialComponentsModule,
     LayoutsModule,
   ],

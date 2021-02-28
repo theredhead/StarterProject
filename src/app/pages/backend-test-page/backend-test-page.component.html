@@ -1,0 +1,15 @@
+<mat-card class="mat-elevation-z2">
+  <mat-card-content>
+    <mat-form-field>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" #filter placeholder="Filter" />
+      <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>
+
+<grid
+  [data]="data"
+  [filterText]="filter.value"
+  (rowEdited)="rowEdited($event)"
+></grid>

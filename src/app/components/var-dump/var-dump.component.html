@@ -1,10 +1,15 @@
 <div class="var-dump">
   <ng-container [ngSwitch]="template">
+    <ng-container #nullTemplate *ngSwitchCase="'tpl-null'">
+      <mat-label><code>null</code></mat-label>
+    </ng-container>
     <ng-container *ngSwitchCase="'tpl-object'">
       <table>
         <tr *ngFor="let key of keys">
           <th>
-            <ng-container *ngIf="isObject(value[key]); else primitive">
+            <ng-container
+              *ngIf="value[key] && isObject(value[key]); else primitive"
+            >
               <button mat-button (click)="toggle(dump)">
                 <mat-icon>{{
                   dump && dump.hidden ? "arrow_right" : "arrow_drop_down"
@@ -36,7 +41,12 @@
       <code>&lt;function&gt;</code>
     </ng-container>
     <ng-container *ngSwitchDefault>
-      {{ value }}
+      <ng-container *ngIf="value != null; else nullValueTpl">
+        {{ value }}
+      </ng-container>
+      <ng-template #nullValueTpl>
+        <mat-label><code>null</code></mat-label>
+      </ng-template>
     </ng-container>
   </ng-container>
 </div>

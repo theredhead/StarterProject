@@ -1,0 +1,36 @@
+<table class="themed mat-elevation-z4" [class.editable]="editable">
+  <thead *ngIf="showHeader">
+    <tr>
+      <th *ngIf="allowSelection">
+        <mat-checkbox
+          [indeterminate]="someSelected"
+          [(ngModel)]="allSelected"
+          (ngModelChange)="toggleAll()"
+        ></mat-checkbox>
+      </th>
+      <th *ngFor="let field of fields">
+        <div>{{ field }}</div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of filteredRows; let rowIndex = index">
+      <td *ngIf="allowSelection">
+        <mat-checkbox
+          [checked]="isSelected(row)"
+          (change)="toggleSelected(row)"
+        ></mat-checkbox>
+      </td>
+      <td *ngFor="let field of fields; let fieldIndex = index">
+        <div
+          #div
+          [contentEditable]="editable"
+          (focus)="focussed(div)"
+          (blur)="update(row, field, div.innerText)"
+          (keyup)="handleKeyUp($event, rowIndex, fieldIndex, field)"
+          [innerText]="row[field]"
+        ></div>
+      </td>
+    </tr>
+  </tbody>
+</table>
