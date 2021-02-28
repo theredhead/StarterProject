@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start-frontend": "ng serve",
+    "start-backend": "server/node_modules/.bin/ts-node-dev --project server/tsconfig.json server/src/server.ts",
+    "start": "concurrently \"npm run-script start-frontend\" \"npm run-script start-backend\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -21,6 +23,7 @@
     "@angular/platform-browser": "~11.2.1",
     "@angular/platform-browser-dynamic": "~11.2.1",
     "@angular/router": "~11.2.1",
+    "concurrently": "^6.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"
