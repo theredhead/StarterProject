@@ -8,6 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class VarDumpComponent {
   @Input() value: any;
+  @Input() maxDepth = 5;
 
   get keys(): any[] {
     return Object.keys(this.value);

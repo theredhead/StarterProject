@@ -1,5 +1,6 @@
 /// <reference types="@types/mysql" />
 
+import { compileDirectiveFromMetadata } from '@angular/compiler';
 import * as mysql from 'mysql';
 
 export interface RecordSnippet {
@@ -101,9 +102,88 @@ export class MySqlDbPool {
     const values = Object.values(key);
     return this.query(commandText, values, singleResult);
   }
+
+  public ifTableExists(
+    name: string,
+    commandText: string,
+    params: any[],
+    transform: TransformFn
+  ) {
+    return this.query(
+      'SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1',
+      [name]
+    ).then((rows: any[]) => {
+      if (rows.length) {
+        this.query(commandText, params, transform);
+      }
+    });
+  }
+
+  public ifNotTableExists(
+    name: string,
+    commandText: string,
+    params: any[],
+    transform: TransformFn
+  ) {
+    return this.query(
+      'SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1',
+      [name]
+    ).then((rows: any[]) => {
+      if (rows.length === 0) {
+        this.query(commandText, params, transform);
+      }
+    });
+  }
+
+  public async doesTableExists(name: string): Promise<boolean> {
+    try {
+      const rows = await this.query(
+        'SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? LIMIT 1',
+        [name]
+      );
+      return rows.length === 1;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  public createTable(
+    name: string,
+    columns: ColumnDefinition[],
+    autoId: boolean = true
+  ): Promise<any> {
+    const actualColumns: ColumnDefinition[] = autoId
+      ? [
+          {
+            name: 'id',
+            type: 'BIGINT NOT NULL AUTO_INCREMENT',
+            primaryKey: true,
+          },
+          ...columns,
+        ]
+      : columns;
+
+    const formattedColumns = actualColumns
+      .map((c) => `${c.name} ${c.type}`)
+      .join(', ');
+    const primaryKey = actualColumns
+      .filter((c) => c.primaryKey)
+      .map((c) => c.name)
+      .join(', ');
+
+    const sql = `CREATE TABLE ${name} (${formattedColumns}, PRIMARY KEY(${primaryKey}))`;
+    return this.query(sql, []);
+  }
 }
 
 const logTransformFn = (data: any): any => {
   console.log('QueryResult:', data);
   return data;
 };
+
+interface ColumnDefinition {
+  name: string;
+  type: string;
+  primaryKey?: boolean;
+}

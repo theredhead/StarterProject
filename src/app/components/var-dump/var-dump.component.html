@@ -1,4 +1,4 @@
-<div class="var-dump">
+<div class="var-dump" *ngIf="maxDepth > 0; else preventRecursion">
   <ng-container [ngSwitch]="template">
     <ng-container #nullTemplate *ngSwitchCase="'tpl-null'">
       <mat-label><code>null</code></mat-label>
@@ -29,7 +29,7 @@
             </ng-template>
           </th>
           <td #dump hidden="hidden">
-            <var-dump [value]="value[key]"></var-dump>
+            <var-dump [value]="value[key]" [maxDepth]="maxDepth - 1"></var-dump>
           </td>
           <td [hidden]="!dump.hidden">
             <mat-label>{{ value[key] }}</mat-label>
@@ -50,3 +50,6 @@
     </ng-container>
   </ng-container>
 </div>
+<ng-template #preventRecursion>
+  <mat-label><em>Depth limit reached</em></mat-label>
+</ng-template>

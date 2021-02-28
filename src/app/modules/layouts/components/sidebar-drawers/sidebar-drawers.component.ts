@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 

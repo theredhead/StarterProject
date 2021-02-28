@@ -87,8 +87,6 @@ export const splitSearchText = (searchText: string) => {
       needle = needle + character;
     }
   }
-  if (quoted) {
-    needles.push(needle);
-  }
+  needles.push(needle);
   return needles.filter((s) => s.length > 0);
 };
