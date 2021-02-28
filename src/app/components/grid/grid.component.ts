@@ -9,7 +9,10 @@ import {
   Output,
   SimpleChange,
 } from '@angular/core';
-import { object_matches_searchtext } from '../../utilities/text-utilities';
+import {
+  filteredBySearchText,
+  objectMatchesSearchtext,
+} from '../../utilities/text-utilities';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -27,7 +30,6 @@ export class GridComponent implements OnInit {
 
   allSelected = false;
   someSelected = false;
-  filterFunc: FilterPredicate;
 
   readonly selection = new SelectionModel<any>(true, [], true);
 
@@ -36,18 +38,13 @@ export class GridComponent implements OnInit {
   }
 
   get filteredRows(): any[] {
-    return this.filterText.trim().length === 0
-      ? this.data
-      : this.data.filter((o) => this.filterFunc(o, this.filterText));
+    return filteredBySearchText(this.data, this.filterText);
   }
 
   constructor(
     private table: ElementRef,
     private changeDetectorRef: ChangeDetectorRef
-  ) {
-    this.filterFunc = (o: any, filter: string): boolean =>
-      object_matches_searchtext(o, filter);
-  }
+  ) {}
 
   ngOnInit() {
     this.selection.changed.subscribe(() => {
@@ -199,5 +196,3 @@ export class RowEditedEvent {
     readonly change: SimpleChange
   ) {}
 }
-
-export type FilterPredicate = (o: any, filterText: string) => boolean;
