@@ -35,6 +35,8 @@
 //   must _not_ be present in the haystack
 //
 
+import { ValueTransformer } from '@angular/compiler/src/util';
+
 /**
  * Recursively converts properties to text for an object tree
  * essentially turning it into a text blob that can be used for
@@ -207,3 +209,53 @@ export const filteredBySearchText = (
     stringContainsAll(objectToSearchableText(o), needles)
   );
 };
+
+const anyValueAsString = (o: any): string =>
+  typeof o === 'object' ? objectToSearchableText(o) : String(o);
+
+const PROPERTY_INDICATOR_CHAR = ':';
+abstract class FilterPredicate {
+  constructor(protected needle: string) {}
+  abstract isMatch(obj: any): boolean;
+}
+
+class ContainsFilterPredicate extends FilterPredicate {
+  isMatch(obj: any): boolean {
+    return (
+      Object.values(obj).find((propertyValue) =>
+        anyValueAsString(propertyValue).indexOf(this.needle)
+      ) !== undefined
+    );
+  }
+}
+
+class DoesNotContainFilterPredicate extends FilterPredicate {
+  isMatch(obj: any): boolean {
+    return (
+      Object.values(obj).find((propertyValue) =>
+        anyValueAsString(propertyValue).indexOf(this.needle)
+      ) === undefined
+    );
+  }
+}
+
+abstract class SpecificPropertyFilterPredicate extends FilterPredicate {
+  readonly property!: string;
+  readonly content!: string;
+
+  constructor(needle: string) {
+    super(needle);
+    const parts = needle.split(PROPERTY_INDICATOR_CHAR);
+    this.property = parts.shift() ?? '';
+    this.content = parts.join(PROPERTY_INDICATOR_CHAR);
+  }
+}
+
+class SpecificPropertyMatchesFilterPredicate extends SpecificPropertyFilterPredicate {
+  isMatch(obj: any): boolean {
+    return (
+      obj.hasOwnProperty(this.property) &&
+      anyValueAsString(obj[this.property]).indexOf(this.content) > 0
+    );
+  }
+}

@@ -1,7 +1,7 @@
 /// <reference types="@types/mysql" />
 
 import { Request, Response } from 'express';
-import { databaseSettings } from '../../../db-conf';
+import { databaseSettings } from '../../db-conf';
 import { HttpController } from './HttpController';
 import { MySqlDbPool, singleResult } from './mysql-db';
 
@@ -39,15 +39,17 @@ export class DataAccessController extends HttpController {
 
     this.db
       .query(commandText, [req.params.table])
-      .then((data) =>
-        res.send(
-          data.rows.map((row: any) => ({
-            table: row.TABLE_NAME,
-            column: row.COLUMN_NAME,
-            type: row.COLUMN_TYPE,
-            // row,
-          }))
-        )
+      .then(
+        (data) => res.send(data.rows)
+
+        // res.send(
+        //   data.rows.map((row: any) => ({
+        //     table: row.TABLE_NAME,
+        //     column: row.COLUMN_NAME,
+        //     type: row.COLUMN_TYPE,
+        //     // row,
+        //   }))
+        // )
       )
       .catch((error) => res.send(error));
   };

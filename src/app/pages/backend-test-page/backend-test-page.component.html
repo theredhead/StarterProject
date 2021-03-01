@@ -1,7 +1,14 @@
-<ng-container *ngIf="data?.length; else error">
+<ng-container *ngIf="rows?.length; else error">
   <mat-card class="mat-elevation-z2">
     <mat-card-content>
       <mat-toolbar>
+        <mat-form-field>
+          <mat-select [(ngModel)]="table" (ngModelChange)="ngAfterViewInit()">
+            <mat-option *ngFor="let t of tables" [value]="t">{{
+              t
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
         <span style="flex: 1 1 auto"></span>
         <mat-form-field>
           <mat-icon matPrefix>search</mat-icon>
@@ -9,8 +16,17 @@
           <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
         </mat-form-field>
       </mat-toolbar>
+
+      <h1>{{ table }}</h1>
+
       <grid
-        [data]="data"
+        [data]="schema"
+        [filterText]="filter.value"
+        (rowEdited)="rowEdited($event)"
+      ></grid>
+      <grid
+        [data]="rows"
+        [columns]="schema"
         [filterText]="filter.value"
         (rowEdited)="rowEdited($event)"
       ></grid>

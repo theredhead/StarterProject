@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import * as formatDuration from 'format-duration';
 import { HttpController } from '../data/HttpController';
 
 export class StatusController extends HttpController {
@@ -19,7 +18,7 @@ export class StatusController extends HttpController {
       uptime: {
         ms: uptime,
         sec: Math.floor(uptime / 100),
-        formatted: formatDuration(uptime, { leading: true }),
+        // formatted: formatDuration(uptime, { leading: true }),
       },
     };
 

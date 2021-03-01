@@ -3,6 +3,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { TimeoutError } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { RowEditedEvent } from 'src/app/components/grid/grid.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-backend-test-page',
@@ -10,7 +11,11 @@ import { RowEditedEvent } from 'src/app/components/grid/grid.component';
   styleUrls: ['./backend-test-page.component.scss'],
 })
 export class BackendTestPageComponent implements OnInit, AfterViewInit {
-  data: any[] = [];
+  table = 'Heroes';
+  tables: string[] = [];
+  rows: any[] = [];
+  schema: any[] = [];
+
   message?: string;
   error: any;
   timedOut = false;
@@ -26,15 +31,33 @@ export class BackendTestPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {}
   ngAfterViewInit(): void {
-    const location = new URL(window.location.href);
-    const endpoint = `http://${location.hostname}:5000/api/Heroes`;
+    if (this.tables.length == 0) {
+      this.get([], (tables) => {
+        this.tables = tables;
+      });
+    }
+    this.assign(this.table);
+  }
 
+  private assign(table: string) {
+    this.get([table], (rows) => {
+      this.rows = rows;
+    });
+    this.get([table, 'schema'], (schema) => {
+      this.schema = schema;
+    });
+  }
+  private get(api: string[], then: (rows: any[]) => void) {
+    const backend = environment.backends.main;
+    const endpoint = `http://${backend.host}:${backend.port}/api/${api.join(
+      '/'
+    )}`;
     this.http
       .get<any[]>(endpoint)
       .pipe(timeout(1000))
       .subscribe(
         (data) => {
-          this.data = data;
+          then(data);
         },
         (error) => {
           console.error(error);

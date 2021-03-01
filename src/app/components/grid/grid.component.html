@@ -22,7 +22,9 @@
         ></mat-checkbox>
       </td>
       <td *ngFor="let field of fields; let fieldIndex = index">
+        <!-- -->
         <div
+          [title]="columnInfo(field)?.DATA_TYPE"
           #div
           [contentEditable]="editable"
           (focus)="focussed(div)"

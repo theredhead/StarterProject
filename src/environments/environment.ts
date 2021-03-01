@@ -7,6 +7,12 @@ import { product } from './product';
 export const environment = {
   product,
   production: false,
+  backends: {
+    main: {
+      host: new URL(location.href).hostname,
+      port: 8080,
+    },
+  },
 };
 
 /*

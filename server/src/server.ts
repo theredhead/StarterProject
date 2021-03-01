@@ -7,7 +7,7 @@ import { crossOriginResourceSharing } from './middleware/cors-enabler';
 import { DataAccessController } from './controllers/data/data-access.controller';
 
 const app = new App({
-  port: 5000,
+  port: 8080,
   controllers: [new StatusController(), new DataAccessController()],
   middleWares: [
     crossOriginResourceSharing(),

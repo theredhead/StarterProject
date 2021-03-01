@@ -26,6 +26,7 @@ export class GridComponent implements OnInit {
   @Input() allowSelection = false;
   @Output() rowEdited = new EventEmitter<RowEditedEvent>();
   @Input() data: any[] = [];
+  @Input() columns: any[] = [];
   @Input() filterText = '';
 
   allSelected = false;
@@ -45,6 +46,10 @@ export class GridComponent implements OnInit {
     private table: ElementRef,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
+
+  columnInfo(fieldName: string): any {
+    return (this.columns ?? []).find((c) => c.COLUMN_NAME === fieldName) || {};
+  }
 
   ngOnInit() {
     this.selection.changed.subscribe(() => {
