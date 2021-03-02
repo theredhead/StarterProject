@@ -48,6 +48,11 @@ export class BackendTestPageComponent implements OnInit {
   rowEdited(e: RowEditedEvent) {
     const row = e.row;
     const rowIndex = this.rows.indexOf(row);
+
+    if (row?.lastmodified) {
+      delete row.lastmodified;
+    }
+
     if (!(row?.id ?? null)) {
       delete row.id;
       this.api.httpPost(

@@ -1,16 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import {
-  dateCorrectedForTimezoneOffset,
-  dateOnly,
-} from 'src/app/utilities/date-utilities';
-import { stripSurrounding } from 'src/app/utilities/text-utilities';
-import {
-  MysqlColumnSchemaRow,
-  mysqlDbEnum,
-  mysqlDbSet,
-  mysqlDbTimeStamp,
-} from '../grid-helpers';
+
+import { dateOnly } from 'src/app/utilities/date-utilities';
+import { MysqlColumnSchemaRow, mysqlDbTimeStamp } from '../grid-helpers';
 
 const SINGLE_QUOTE = "'";
 const SINGLE_QUOTE2 = "'";
@@ -33,8 +24,9 @@ export class GridCellComponent {
     switch (token) {
       case 'date':
       case 'datetime':
-      case 'timestamp':
         return 'date';
+      case 'timestamp':
+        return 'timestamp';
       default:
         return token;
     }
@@ -44,8 +36,8 @@ export class GridCellComponent {
     return (
       this.editable &&
       this.schema?.COLUMN_NAME !== 'id' &&
-      this.schema?.DATA_TYPE !== mysqlDbTimeStamp &&
-      this.schema?.PRIVILEGES.split(',').includes('update')
+      this.schema?.DATA_TYPE !== mysqlDbTimeStamp
+      // this.schema?.PRIVILEGES.split(',').includes('update')
     );
   }
 
@@ -60,20 +52,20 @@ export class GridCellComponent {
     }
     return [];
   }
-  setValue() {
-    return this.value.split(',').map((s) => s.trim());
+  getSetValue() {
+    return (this.value ?? '').split(',').map((s) => s.trim());
   }
   isSelectedSetItem(option: string): boolean {
-    return this.setValue().includes(option);
+    return this.getSetValue().includes(option);
   }
   toggleSetItem(option: string) {
-    const currentValue = this.setValue();
+    const currentValue = this.getSetValue();
     if (currentValue.includes(option)) {
       this.handleAnyBlur(currentValue.filter((o) => o !== option).join(','));
     } else {
       this.handleAnyBlur([...currentValue, option].join(','));
     }
-    return this.setValue().includes(option);
+    return this.getSetValue().includes(option);
   }
   getEnumOptions(): string[] {
     if (this.schema?.DATA_TYPE === 'enum') {

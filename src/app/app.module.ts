@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,8 +25,15 @@ import {
   MAT_DATE_LOCALE,
   NativeDateAdapter,
 } from '@angular/material/core';
-import { CustomDateAdapter } from './CustomDateAdapter';
 
+import { registerLocaleData } from '@angular/common';
+
+import localeNl from '@angular/common/locales/nl';
+import localeNlExtra from '@angular/common/locales/extra/nl';
+
+registerLocaleData(localeNl, localeNlExtra);
+
+const locale = 'nl-NL';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +59,13 @@ import { CustomDateAdapter } from './CustomDateAdapter';
     LayoutsModule,
   ],
   providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
+    // {
+    //   provide: LOCALE_ID,
+    //   deps: [SettingsService], //some service handling global settings
+    //   useFactory: (settingsService) => settingsService.getLanguage() //returns locale string
+    // }
+    { provide: LOCALE_ID, useValue: locale },
+    { provide: MAT_DATE_LOCALE, useValue: locale },
     { provide: DateAdapter, useClass: NativeDateAdapter },
   ],
   bootstrap: [AppComponent],

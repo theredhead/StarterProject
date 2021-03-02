@@ -21,6 +21,10 @@
     <ng-template #readonlyDate>{{ value | date: "longDate" }}</ng-template>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'timestamp'">
+    <mat-label>{{ value | date: "short" }}</mat-label>
+  </ng-container>
+
   <ng-container *ngSwitchCase="'tinyint'">
     <mat-checkbox
       #chk
