@@ -30,6 +30,39 @@
     ></mat-checkbox>
   </ng-container>
 
+  <ng-container *ngSwitchCase="'enum'">
+    <mat-select
+      class="editor"
+      style="width: 100px"
+      #dropdown
+      [value]="value"
+      [disabled]="!canEdit"
+      (selectionChange)="handleAnyBlur($event.value)"
+    >
+      <mat-option *ngFor="let opt of getEnumOptions()" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'set'">
+    <div
+      class="editor"
+      style="display: flex; flex-direction: row; flex-wrap: nowrap"
+      #dropdown
+    >
+      <button
+        *ngFor="let opt of getSetOptions()"
+        (click)="toggleSetItem(opt)"
+        mat-stroked-button
+      >
+        <!-- [color]="isSelectedSetItem(opt) ? 'primary' : 'accent'" -->
+        <mat-icon *ngIf="isSelectedSetItem(opt)">done</mat-icon>
+        {{ opt }}
+      </button>
+    </div>
+  </ng-container>
+
   <ng-container *ngSwitchDefault>
     <div
       #div

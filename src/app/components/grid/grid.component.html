@@ -19,7 +19,13 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let row of filteredRows; let rowIndex = index">
+    <tr
+      *ngFor="
+        let row of filteredRows;
+        let rowIndex = index;
+        trackBy: trackByKey
+      "
+    >
       <td *ngIf="allowSelection">
         <mat-checkbox
           [checked]="isSelected(row)"

@@ -146,10 +146,10 @@ export const stripSurrounding = (
 ): string => {
   let result = s;
   if (s.startsWith(prefix)) {
-    result = result.substring(prefix.length);
+    result = result.substring(0, prefix.length);
   }
   if (s.endsWith(suffix)) {
-    result = result.substring(0, result.length - suffix.length);
+    result = result.substring(result.length, suffix.length);
   }
   return result;
 };

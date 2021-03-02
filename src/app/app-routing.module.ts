@@ -13,6 +13,7 @@ const routes: Routes = [
     children: [{ path: 'about', component: AboutPageComponent }],
   },
   { path: 'test', component: BackendTestPageComponent },
+  { path: 'test/:table', component: BackendTestPageComponent },
   { path: '**', component: NotFoundPageComponent },
 ];
 

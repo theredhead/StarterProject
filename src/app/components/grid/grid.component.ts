@@ -123,7 +123,9 @@ export class GridComponent implements OnInit {
   rollback(edit: RowEditedEvent): void {
     this.update(edit.row, edit.field, edit.change.previousValue, false);
   }
-
+  trackByKey(obj: any) {
+    return obj.id;
+  }
   //#region Keyboard navigation
 
   handleKeyUp(

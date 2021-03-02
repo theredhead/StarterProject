@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { RowEditedEvent } from 'src/app/components/grid/grid.component';
 import { ApiClientService } from 'src/app/services/api-client.service';
 
@@ -9,16 +10,16 @@ import { ApiClientService } from 'src/app/services/api-client.service';
 })
 export class BackendTestPageComponent implements OnInit {
   showSchema = false;
-  table = 'Person';
+  table = null;
   tables: string[] = [];
-  rows: any[] = [];
+  rows: any[] | null = null;
   schema: any[] = [];
 
   message?: string;
   error: any;
   timedOut = false;
 
-  constructor(private api: ApiClientService) {}
+  constructor(private api: ApiClientService, private route: ActivatedRoute) {}
 
   addRow(): void {
     const defaultValue = (col: any): any => {
@@ -68,25 +69,28 @@ export class BackendTestPageComponent implements OnInit {
   }
 
   reload(): void {
-    console.log('Reloading all data.');
-    if (this.tables.length === 0) {
-      this.api.httpGet<string[]>([], (tables) => {
-        this.tables = tables;
-      });
-    }
-    this.assign(this.table);
+    console.log('Reloading table list..');
+    this.api.httpGet<string[]>([], (tables) => {
+      this.tables = tables;
+    });
   }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe((map) =>
+      map.has('table') ? this.assign(map.get('table'), true) : () => {}
+    );
     this.reload();
   }
 
-  private assign(table: string) {
-    this.api.httpGet<any[]>([table, 'schema'], (schema) => {
-      this.api.httpGet<any[]>([table], (rows) => {
-        this.schema = schema;
-        this.rows = rows;
+  private assign(table: string, forceLoad = false) {
+    if (forceLoad || table !== this.table) {
+      this.table = table;
+      this.api.httpGet<any[]>([table, 'schema'], (schema) => {
+        this.api.httpGet<any[]>([table], (rows) => {
+          this.schema = schema;
+          this.rows = rows;
+        });
       });
-    });
+    }
   }
 }
