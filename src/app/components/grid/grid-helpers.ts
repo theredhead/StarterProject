@@ -1,4 +1,3 @@
-import { MySqlDbPool } from 'server/src/controllers/data/mysql-db';
 import { guard } from 'src/app/utilities/guard';
 import { inflector } from 'src/app/utilities/inflector';
 

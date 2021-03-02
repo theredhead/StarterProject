@@ -7,6 +7,8 @@
     "start-backend": "server/node_modules/.bin/ts-node-dev --project server/tsconfig.json server/src/server.ts",
     "start": "concurrently \"npm run-script start-frontend\" \"npm run-script start-backend\"",
     "build": "ng build",
+    "build-frontend-prod": "ng build --prod",
+    "build-backend-prod": "tsc -p server",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

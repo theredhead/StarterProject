@@ -1,5 +1,10 @@
-<table class="themed mat-elevation-z4" [class.editable]="editable">
+<table class="mat-elevation-z4" [class.editable]="editable">
   <thead *ngIf="showHeader">
+    <tr #toolbar class="toolbar" [hidden]="!toolbarCell.hasChildNodes">
+      <td #toolbarCell [attr.colspan]="numberOfRenderedColumns">
+        <ng-content #toolbar></ng-content>
+      </td>
+    </tr>
     <tr>
       <th *ngIf="allowSelection">
         <mat-checkbox
@@ -22,10 +27,20 @@
         ></mat-checkbox>
       </td>
       <td *ngFor="let field of fields; let fieldIndex = index">
-        <!-- -->
+        <ng-container *ngIf="true">
+          <grid-cell
+            (keyup)="handleKeyUp($event, rowIndex, fieldIndex, field)"
+            [editable]="editable"
+            [schema]="columnSchema(field)"
+            [value]="row[field]"
+            (valueChange)="update(row, field, $event)"
+          ></grid-cell>
+        </ng-container>
+
         <div
-          [title]="columnInfo(field)?.DATA_TYPE"
           #div
+          *ngIf="false"
+          [title]="columnSchema(field)?.DATA_TYPE"
           [contentEditable]="editable"
           (focus)="focussed(div)"
           (blur)="update(row, field, div.innerText)"

@@ -1,10 +1,30 @@
-table.editable {
-  tbody {
-    td div:hover {
-      outline-offset: 2pd;
-      outline-width: 4px;
-      outline-color: var(--theme-accent);
-      outline-style: solid;
+table {
+  td, th {
+    padding: 4px 8px;
+  }
+  thead {
+    .toolbar {
+      td, th  {
+        padding: 0;
+      }
     }
+  }
+  .editable {
+    tbody {
+      td {
+        div:hover {
+          outline-offset: 2px;
+          outline-width: 4px;
+          outline-color: var(--theme-accent);
+          outline-style: solid;
+        }
+      }
+    }
+  }
+}
+
+.schema-grid {
+  table.themed > thead > th {
+    transform: rotate(60deg);
   }
 }

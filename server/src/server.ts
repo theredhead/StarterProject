@@ -13,7 +13,7 @@ const app = new App({
     crossOriginResourceSharing(),
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
-    requestLogger((...e: any[]) => console.log(`[LOG]: `, ...e)),
+    // requestLogger((...e: any[]) => console.log(`[LOG]: `, ...e)),
   ],
 });
 

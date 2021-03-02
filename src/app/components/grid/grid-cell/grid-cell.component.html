@@ -1,0 +1,42 @@
+<ng-container [ngSwitch]="template">
+  <ng-container *ngSwitchCase="'date'">
+    <ng-container
+      *ngIf="canEdit; else readonlyDate"
+      style="display: flex; flex-direction: row"
+    >
+      <input
+        style="background-color: transparent; color: inherit; border: none"
+        #dateInput
+        rel="editor"
+        [matDatepicker]="datePicker"
+        [value]="value"
+        (dateChange)="handleDateChange($event.value)"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="datePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+    </ng-container>
+    <ng-template #readonlyDate>{{ value | date: "longDate" }}</ng-template>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="'tinyint'">
+    <mat-checkbox
+      #chk
+      [checked]="value"
+      [disabled]="!canEdit"
+      (change)="handleAnyBlur($event.checked)"
+    ></mat-checkbox>
+  </ng-container>
+
+  <ng-container *ngSwitchDefault>
+    <div
+      #div
+      rel="editor"
+      [contentEditable]="canEdit"
+      (blur)="handleTextBlur(div.innerText)"
+      [innerText]="value"
+    ></div>
+  </ng-container>
+</ng-container>

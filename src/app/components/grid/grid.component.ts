@@ -9,6 +9,7 @@ import {
   Output,
   SimpleChange,
 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import {
   filteredBySearchText,
   objectMatchesSearchtext,
@@ -25,14 +26,21 @@ export class GridComponent implements OnInit {
   @Input() editable = true;
   @Input() allowSelection = false;
   @Output() rowEdited = new EventEmitter<RowEditedEvent>();
-  @Input() data: any[] = [];
   @Input() columns: any[] = [];
   @Input() filterText = '';
+  @Input() data: any[] = [];
 
   allSelected = false;
   someSelected = false;
-
   readonly selection = new SelectionModel<any>(true, [], true);
+
+  get numberOfRenderedColumns(): number {
+    return this.fields.length + (this.allowSelection ? 1 : 0);
+  }
+
+  private readonly m = {
+    data: [],
+  };
 
   get fields() {
     return Array.isArray(this.data) ? Object.keys(this.data[0] ?? []) : [];
@@ -41,13 +49,12 @@ export class GridComponent implements OnInit {
   get filteredRows(): any[] {
     return filteredBySearchText(this.data, this.filterText);
   }
-
   constructor(
     private table: ElementRef,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
-  columnInfo(fieldName: string): any {
+  columnSchema(fieldName: string): any {
     return (this.columns ?? []).find((c) => c.COLUMN_NAME === fieldName) || {};
   }
 
@@ -96,7 +103,7 @@ export class GridComponent implements OnInit {
   }
 
   update(row: any, field: string, newValue: string, firstChange = true) {
-    const oldValue = row[field];
+    const oldValue = row[field] ?? null;
     if (oldValue === null && newValue === '') {
       return;
     }
@@ -117,12 +124,16 @@ export class GridComponent implements OnInit {
     this.update(edit.row, edit.field, edit.change.previousValue, false);
   }
 
+  //#region Keyboard navigation
+
   handleKeyUp(
     ev: KeyboardEvent,
     rowIndex: number,
     fieldIndex: number,
     field: string
   ): void {
+    console.log(ev);
+
     if (!this.editable) {
       return;
     }
@@ -153,15 +164,21 @@ export class GridComponent implements OnInit {
       'table'
     );
     // css selector indices are 1 based...
-    const selector = `tbody>tr:nth-child(${rowIndex + 1})>td:nth-child(${
-      fieldIndex + 1
-    })>div`;
+    const y = rowIndex + 1;
+    // selection adds a column to the front too...
+    const x = fieldIndex + 1 + (this.allowSelection ? 1 : 0);
+    const selector = `tbody>tr:nth-child(${y})>td:nth-child(${x}) [rel="editor"]`;
+
     // console.log('finding: ', selector);
     const element = table?.querySelector(selector) as HTMLDivElement;
     if (element) {
       element.focus();
       return true;
     }
+    console.log(
+      'no element with class="editor" for keyboard navigation found at',
+      { x, y }
+    );
     return false;
   }
 
@@ -180,6 +197,7 @@ export class GridComponent implements OnInit {
   handleNavigateRight = (rowIndex: number, fieldIndex: number) => {
     this.tryNavigate(rowIndex, fieldIndex + 1);
   };
+  //#endregion Keyboard navigation
 
   focussed(element: HTMLDivElement) {
     requestAnimationFrame(() => {

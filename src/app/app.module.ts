@@ -19,6 +19,13 @@ import { BackendTestPageComponent } from './pages/backend-test-page/backend-test
 import { HttpClientModule } from '@angular/common/http';
 import { GridComponent } from './components/grid/grid.component';
 import { FormsModule } from '@angular/forms';
+import { GridCellComponent } from './components/grid/grid-cell/grid-cell.component';
+import {
+  DateAdapter,
+  MAT_DATE_LOCALE,
+  NativeDateAdapter,
+} from '@angular/material/core';
+import { CustomDateAdapter } from './CustomDateAdapter';
 
 @NgModule({
   declarations: [
@@ -33,6 +40,7 @@ import { FormsModule } from '@angular/forms';
     VarDumpComponent,
     BackendTestPageComponent,
     GridComponent,
+    GridCellComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +51,10 @@ import { FormsModule } from '@angular/forms';
     MaterialComponentsModule,
     LayoutsModule,
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {

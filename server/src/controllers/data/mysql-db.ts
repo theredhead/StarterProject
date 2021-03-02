@@ -17,6 +17,10 @@ export class MySqlDbPool {
 
   constructor(private readonly config: string | mysql.PoolConfig) {
     this.pool = mysql.createPool(config);
+    // this.pool.on('connection', (connection) => {
+    //   console.log('Setting session timezone');
+    //   connection.query('SET SESSION TIME_ZONE = ?;', ['UTC']);
+    // });
   }
 
   public query(

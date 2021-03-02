@@ -2,34 +2,75 @@
   <mat-card class="mat-elevation-z2">
     <mat-card-content>
       <mat-toolbar>
-        <mat-form-field>
-          <mat-select [(ngModel)]="table" (ngModelChange)="ngAfterViewInit()">
-            <mat-option *ngFor="let t of tables" [value]="t">{{
-              t
-            }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div>
+          <mat-form-field>
+            <mat-select [(ngModel)]="table" (ngModelChange)="reload()">
+              <mat-option *ngFor="let t of tables" [value]="t">{{
+                t
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
         <span style="flex: 1 1 auto"></span>
-        <mat-form-field>
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput type="search" #filter placeholder="Filter" />
-          <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
-        </mat-form-field>
+        <div style="display: grid; grid-auto-columns: max-content">
+          <div>
+            <mat-checkbox [(ngModel)]="showSchema">Show schema</mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox [(ngModel)]="dataGrid.editable"
+              >Inline edit</mat-checkbox
+            >
+          </div>
+        </div>
+        <span style="flex: 1 1 auto"></span>
+        <div>
+          <mat-form-field>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput type="search" #filter placeholder="Filter" />
+            <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
+          </mat-form-field>
+        </div>
       </mat-toolbar>
 
-      <h1>{{ table }}</h1>
+      <grid
+        class="schema-grid"
+        *ngIf="showSchema"
+        [editable]="false"
+        [data]="schema"
+        [showHeader]="true"
+      ></grid>
 
       <grid
-        [data]="schema"
-        [filterText]="filter.value"
-        (rowEdited)="rowEdited($event)"
-      ></grid>
-      <grid
+        #dataGrid
         [data]="rows"
         [columns]="schema"
+        [allowSelection]="true"
         [filterText]="filter.value"
         (rowEdited)="rowEdited($event)"
-      ></grid>
+      >
+        <mat-toolbar>
+          <div>
+            <button mat-button color="accent" (click)="addRow()">
+              <mat-icon>add</mat-icon>
+              <mat-label>New row...</mat-label>
+            </button>
+          </div>
+          <span style="flex: 1 1 auto"></span>
+          <div>
+            <button
+              mat-button
+              [disabled]="!dataGrid.selection.selected.length"
+              color="warn"
+              (click)="delete(dataGrid.selection.selected)"
+            >
+              <mat-icon>delete</mat-icon>
+              <mat-label
+                >Delete {{ dataGrid.selection.selected.length }} rows</mat-label
+              >
+            </button>
+          </div>
+        </mat-toolbar>
+      </grid>
     </mat-card-content>
   </mat-card>
 </ng-container>

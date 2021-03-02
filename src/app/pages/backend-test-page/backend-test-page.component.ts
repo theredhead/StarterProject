@@ -1,17 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { TimeoutError } from 'rxjs';
-import { timeout } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 import { RowEditedEvent } from 'src/app/components/grid/grid.component';
-import { environment } from 'src/environments/environment';
+import { ApiClientService } from 'src/app/services/api-client.service';
 
 @Component({
   selector: 'app-backend-test-page',
   templateUrl: './backend-test-page.component.html',
   styleUrls: ['./backend-test-page.component.scss'],
 })
-export class BackendTestPageComponent implements OnInit, AfterViewInit {
-  table = 'Heroes';
+export class BackendTestPageComponent implements OnInit {
+  showSchema = false;
+  table = 'Person';
   tables: string[] = [];
   rows: any[] = [];
   schema: any[] = [];
@@ -20,53 +18,75 @@ export class BackendTestPageComponent implements OnInit, AfterViewInit {
   error: any;
   timedOut = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiClientService) {}
 
+  addRow(): void {
+    const defaultValue = (col: any): any => {
+      if (col.IS_NULLABLE === 'NO') {
+        return col.COLUMN_DEFAULT ?? '';
+      }
+      return null;
+    };
+    const row: any = {};
+    this.schema.forEach((col) => {
+      row[col.COLUMN_NAME] = defaultValue(col);
+    });
+    console.log('generated new row:', row);
+    this.rows.push(row);
+  }
+  delete(rows: any[]): void {
+    const rowsLeft = this.rows.filter((r) => !rows.includes(r));
+    this.rows = rowsLeft;
+    while (rows.length) {
+      const row = rows.pop();
+      this.api.httpDelete([this.table, row.id], (d) => {
+        console.log('deleted row:', d);
+      });
+    }
+  }
   rowEdited(e: RowEditedEvent) {
+    const row = e.row;
+    const rowIndex = this.rows.indexOf(row);
+    if (!(row?.id ?? null)) {
+      delete row.id;
+      this.api.httpPost(
+        [this.table],
+        row,
+        (savedRow: any) => (this.rows[rowIndex] = savedRow)
+      );
+    } else {
+      this.api.httpPut(
+        [this.table, row.id],
+        row,
+        (savedRow: any) => (this.rows[rowIndex] = savedRow)
+      );
+    }
     console.log(
       `Changed ${e.field} from "${e.change.previousValue}" to "${e.change.currentValue}" in row`,
       e.row
     );
   }
 
-  ngOnInit(): void {}
-  ngAfterViewInit(): void {
-    if (this.tables.length == 0) {
-      this.get([], (tables) => {
+  reload(): void {
+    console.log('Reloading all data.');
+    if (this.tables.length === 0) {
+      this.api.httpGet<string[]>([], (tables) => {
         this.tables = tables;
       });
     }
     this.assign(this.table);
   }
 
-  private assign(table: string) {
-    this.get([table], (rows) => {
-      this.rows = rows;
-    });
-    this.get([table, 'schema'], (schema) => {
-      this.schema = schema;
-    });
+  ngOnInit(): void {
+    this.reload();
   }
-  private get(api: string[], then: (rows: any[]) => void) {
-    const backend = environment.backends.main;
-    const endpoint = `http://${backend.host}:${backend.port}/api/${api.join(
-      '/'
-    )}`;
-    this.http
-      .get<any[]>(endpoint)
-      .pipe(timeout(1000))
-      .subscribe(
-        (data) => {
-          then(data);
-        },
-        (error) => {
-          console.error(error);
-          if (error instanceof TimeoutError) {
-            this.timedOut = true;
-          }
-          this.error = error;
-          this.message = error.message;
-        }
-      );
+
+  private assign(table: string) {
+    this.api.httpGet<any[]>([table, 'schema'], (schema) => {
+      this.api.httpGet<any[]>([table], (rows) => {
+        this.schema = schema;
+        this.rows = rows;
+      });
+    });
   }
 }

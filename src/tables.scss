@@ -2,6 +2,30 @@ table.themed {
   margin: 1rem auto;
   border-collapse: collapse;
 
+  // tbody {
+  //   display: block;
+  //   overflow: auto;
+  //   // height: 500px;
+  //   width: 100%;
+  // }
+
+  // thead tr {
+  //   display: table;
+  //   width: 100%;
+  //   table-layout: fixed;
+  // }
+
+  // thead,
+  // tbody tr {
+  //   display: table;
+  //   width: 100%;
+  //   table-layout: fixed;
+  // }
+
+  // thead {
+  //   width: calc(100%);
+  // }
+
   td,
   th {
     text-align: left;
@@ -15,28 +39,27 @@ table.themed {
     th {
       overflow: hidden;
       height: 100%;
-      background: var(--theme-accent) 50% / cover;
 
       div {
         height: inherit;
         background: inherit;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+        // -webkit-background-clip: text;
+        // background-clip: text;
+        // color: transparent;
         text-transform: capitalize;
-        filter: invert(1) grayscale(1) contrast(9);
+        // filter: invert(1) grayscale(1) contrast(9);
       }
     }
   }
 
   tbody {
     font-size: 1rem;
-
+    background-color: var(--theme-accent);
     tr {
       // background-color: rgba(255, 255, 255, 0.9);
 
       &:nth-child(odd) {
-        // background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.8);
       }
     }
   }
@@ -45,11 +68,32 @@ table.themed {
 table.themed thead th,
 table.themed.primary thead th {
   background: var(--theme-primary) 50% / cover !important;
+  color: var(--theme-text-on-primary) !important;
 }
 table.themed.accent thead th {
   background: var(--theme-accent) 50% / cover !important;
+  color: var(--theme-text-on-accent) !important;
+
 }
 table.themed.warn thead th {
   background: var(--theme-warn) 50% / cover !important;
+  color: var(--theme-text-on-warn) !important;
 }
 
+table.themed tbody tr {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: black;
+  &:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: black;
+  }
+}
+
+.dark table.themed tbody tr {
+  background-color: rgba(32, 32, 32, 0.7);
+  color: white;
+  &:nth-child(odd) {
+    background-color: rgba(32, 32, 32, 0.6);
+    color: white;
+  }
+}
