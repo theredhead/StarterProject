@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { MysqlColumnSchemaRow } from 'src/app/components/grid/grid-helpers';
 import { RowEditedEvent } from 'src/app/components/grid/grid.component';
 import { ApiClientService } from 'src/app/services/api-client.service';
 
@@ -11,18 +13,31 @@ import { ApiClientService } from 'src/app/services/api-client.service';
 export class BackendTestPageComponent implements OnInit {
   showSchema = false;
   table = null;
+  filterText = '';
   tables: string[] = [];
   rows: any[] | null = null;
   schema: any[] = [];
-
+  pageIndex = 0;
+  pageSize = 10;
   message?: string;
   error: any;
-  timedOut = false;
+  editable = false;
 
-  constructor(private api: ApiClientService, private route: ActivatedRoute) {}
+  loading$: Observable<number>;
+
+  constructor(
+    private api: ApiClientService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this.loading$ = this.api.loading$.asObservable();
+  }
 
   addRow(): void {
-    const defaultValue = (col: any): any => {
+    const defaultValue = (col: MysqlColumnSchemaRow): any => {
+      if (col.COLUMN_DEFAULT === 'CURRENT_TIMESTAMP') {
+        return new Date();
+      }
       if (col.IS_NULLABLE === 'NO') {
         return col.COLUMN_DEFAULT ?? '';
       }
@@ -33,7 +48,13 @@ export class BackendTestPageComponent implements OnInit {
       row[col.COLUMN_NAME] = defaultValue(col);
     });
     console.log('generated new row:', row);
-    this.rows.push(row);
+
+    // empty filterText
+    this.filterText = '';
+    // move to the last page
+    this.pageIndex = Math.floor((this.rows.length + 1) / this.pageSize);
+    // add row to the end of all items
+    this.rows = [...this.rows, row];
   }
   delete(rows: any[]): void {
     const rowsLeft = this.rows.filter((r) => !rows.includes(r));
@@ -80,13 +101,18 @@ export class BackendTestPageComponent implements OnInit {
     });
   }
 
+  navigateTo(table: string) {
+    // if (table !== this.table) {
+    this.router.navigate(['/table', table]);
+    // }
+  }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((map) =>
       map.has('table') ? this.assign(map.get('table'), true) : () => {}
     );
     this.reload();
   }
-
   private assign(table: string, forceLoad = false) {
     if (forceLoad || table !== this.table) {
       this.table = table;

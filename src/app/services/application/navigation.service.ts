@@ -54,10 +54,10 @@ export const DEFAULT_NAVIGATION_ITEMS: NavigationItem[] = [
     routerLink: ['/about'],
   },
   {
-    caption: 'Support',
-    icon: 'support',
+    caption: 'Data Access',
+    icon: 'schema',
     iconType: 'material',
-    action: () => alert('Not implemented'),
+    routerLink: ['/table'],
   },
   {
     caption: 'Contact',

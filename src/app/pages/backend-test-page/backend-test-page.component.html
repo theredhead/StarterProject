@@ -1,98 +1,130 @@
-<ng-container *ngIf="rows != null; else error">
-  <mat-card class="mat-elevation-z2">
+<mat-toolbar>
+  <div>
+    <mat-form-field>
+      <mat-select [(ngModel)]="table" (ngModelChange)="navigateTo(table)">
+        <mat-option *ngFor="let t of tables" [value]="t">{{ t }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <span style="flex: 1 1 auto"></span>
+  <div style="display: grid; grid-auto-columns: max-content">
+    <div>
+      <mat-checkbox [(ngModel)]="showSchema">Show schema</mat-checkbox>
+    </div>
+    <div>
+      <mat-checkbox [(ngModel)]="editable">Inline edit</mat-checkbox>
+    </div>
+  </div>
+  <span style="flex: 1 1 auto"></span>
+  <div>{{ loading$ | async }} requests</div>
+  <span style="flex: 1 1 auto"></span>
+  <div>
+    <mat-form-field>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        type="search"
+        #filter
+        placeholder="Filter"
+        [(ngModel)]="filterText"
+      />
+      <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
+    </mat-form-field>
+  </div>
+</mat-toolbar>
+
+<ng-container *ngIf="loading$ | async; else notLoading">
+  <mat-card>
+    <mat-card-title>Loading...</mat-card-title>
+    <mat-card-subtitle>We're waiting for data.</mat-card-subtitle>
     <mat-card-content>
-      <mat-toolbar>
-        <div>
-          <mat-form-field>
-            <mat-select [(ngModel)]="table" (ngModelChange)="reload()">
-              <mat-option *ngFor="let t of tables" [value]="t">{{
-                t
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <span style="flex: 1 1 auto"></span>
-        <div style="display: grid; grid-auto-columns: max-content">
-          <div>
-            <mat-checkbox [(ngModel)]="showSchema">Show schema</mat-checkbox>
-          </div>
-          <div>
-            <mat-checkbox [(ngModel)]="dataGrid.editable"
-              >Inline edit</mat-checkbox
-            >
-          </div>
-        </div>
-        <span style="flex: 1 1 auto"></span>
-        <div>
-          <mat-form-field>
-            <mat-icon matPrefix>search</mat-icon>
-            <input matInput type="search" #filter placeholder="Filter" />
-            <mat-icon (click)="filter.value = ''" matSuffix>clear</mat-icon>
-          </mat-form-field>
-        </div>
-      </mat-toolbar>
-
-      <grid
-        class="schema-grid"
-        *ngIf="showSchema"
-        [editable]="false"
-        [data]="schema"
-        [showHeader]="true"
-      ></grid>
-
-      <grid
-        #dataGrid
-        [data]="rows"
-        [columns]="schema"
-        [allowSelection]="true"
-        [filterText]="filter.value"
-        (rowEdited)="rowEdited($event)"
-      >
-        <mat-toolbar>
-          <div>
-            <button mat-button color="accent" (click)="addRow()">
-              <mat-icon>add</mat-icon>
-              <mat-label>New row...</mat-label>
-            </button>
-          </div>
-          <span style="flex: 1 1 auto"></span>
-          <div>
-            <button
-              mat-button
-              [disabled]="!dataGrid.selection.selected.length"
-              color="warn"
-              (click)="delete(dataGrid.selection.selected)"
-            >
-              <mat-icon>delete</mat-icon>
-              <mat-label
-                >Delete {{ dataGrid.selection.selected.length }} rows</mat-label
-              >
-            </button>
-          </div>
-        </mat-toolbar>
-      </grid>
+      One moment please while we get the data
     </mat-card-content>
   </mat-card>
 </ng-container>
 
-<ng-template #error>
-  <mat-card class="mat-elevation-z2">
-    <mat-card-header>
-      <img
-        src="/assets/images/icons/error.png"
-        alt="error"
-        matCardAvatar
-        class="not-rounded"
-      />
-      <mat-card-title>Oops..</mat-card-title>
-      <mat-card-subtitle
-        >It appears there is a slight problem</mat-card-subtitle
-      >
-    </mat-card-header>
-    <mat-card-content>
-      <p>It looks like we can't get any data from the backend.</p>
-      <p>{{ message }}</p>
-      <!-- <var-dump [value]="error" [maxDepth]="2"></var-dump> -->
-    </mat-card-content>
-  </mat-card>
-</ng-template>
+<ng-template #notLoading>
+  <ng-container *ngIf="rows != null; else error">
+    <mat-card class="mat-elevation-z2">
+      <mat-card-content>
+        <grid
+          class="schema-grid"
+          *ngIf="showSchema"
+          [editable]="false"
+          [data]="schema"
+          [showHeader]="true"
+        ></grid>
+
+        <grid
+          #dataGrid
+          [data]="rows"
+          [columns]="schema"
+          [allowSelection]="editable"
+          [filterText]="filterText"
+          (rowEdited)="rowEdited($event)"
+          [pageSize]="pageSize"
+          [pageIndex]="pageIndex"
+          [editable]="editable"
+        >
+          <mat-toolbar *ngIf="editable">
+            <div>
+              <button
+                mat-button
+                color="accent"
+                (click)="addRow()"
+                [disabled]="!editable"
+              >
+                <mat-icon>add</mat-icon>
+                <mat-label>New row...</mat-label>
+              </button>
+            </div>
+            <span style="flex: 1 1 auto"></span>
+            <div>
+              <button
+                mat-button
+                [disabled]="!dataGrid.selection.selected.length || !editable"
+                color="warn"
+                (click)="delete(dataGrid.selection.selected)"
+              >
+                <mat-icon>delete</mat-icon>
+                <mat-label
+                  >Delete
+                  {{ dataGrid.selection.selected.length }} rows</mat-label
+                >
+              </button>
+            </div>
+          </mat-toolbar>
+        </grid>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+
+  <ng-template #error>
+    <mat-card class="mat-elevation-z2">
+      <mat-card-header>
+        <img
+          src="/assets/images/icons/error.png"
+          alt="error"
+          matCardAvatar
+          class="not-rounded"
+        />
+        <mat-card-title>Oops..</mat-card-title>
+        <mat-card-subtitle
+          >It appears there is a slight problem</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <ng-container *ngIf="table; else noTable">
+          <p>It looks like we can't get any data from the backend.</p>
+          <p>{{ message }}</p>
+        </ng-container>
+        <ng-template #noTable>
+          <p>
+            It's probably nothing serious, but you haven't selected a table.
+          </p>
+        </ng-template>
+        <!-- <var-dump [value]="error" [maxDepth]="2"></var-dump> -->
+      </mat-card-content>
+    </mat-card>
+  </ng-template> </ng-template
+><!-- #notLoading -->

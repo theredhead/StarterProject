@@ -5,7 +5,7 @@ export const environment = {
   production: true,
   backends: {
     main: {
-      host: new URL(location.href).hostname,
+      host: '192.168.178.88',
       port: 8080,
     },
   },

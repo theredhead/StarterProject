@@ -9,6 +9,7 @@ import {
   Output,
   SimpleChange,
 } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
 import {
   filteredBySearchText,
@@ -30,8 +31,13 @@ export class GridComponent implements OnInit {
   @Input() filterText = '';
   @Input() data: any[] = [];
 
+  @Input() pageIndex = 0;
+  @Input() pageSize = 10;
+  @Input() useVirtualPagination = true;
+
   allSelected = false;
   someSelected = false;
+
   readonly selection = new SelectionModel<any>(true, [], true);
 
   get numberOfRenderedColumns(): number {
@@ -49,10 +55,24 @@ export class GridComponent implements OnInit {
   get filteredRows(): any[] {
     return filteredBySearchText(this.data, this.filterText);
   }
+
+  get filteredAndPaginatedRows() {
+    const start = this.pageIndex * this.pageSize;
+    return this.filteredRows.slice(start, start + this.pageSize);
+  }
+
   constructor(
     private table: ElementRef,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
+
+  page(ev: PageEvent) {
+    requestAnimationFrame(() => {
+      this.pageIndex = ev.pageIndex;
+      this.pageSize = ev.pageSize;
+    });
+    console.log(ev);
+  }
 
   columnSchema(fieldName: string): any {
     return (this.columns ?? []).find((c) => c.COLUMN_NAME === fieldName) || {};
@@ -123,6 +143,7 @@ export class GridComponent implements OnInit {
   rollback(edit: RowEditedEvent): void {
     this.update(edit.row, edit.field, edit.change.previousValue, false);
   }
+
   trackByKey(obj: any) {
     return obj.id;
   }

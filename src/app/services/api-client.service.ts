@@ -6,7 +6,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TimeoutError } from 'rxjs';
+import { BehaviorSubject, TimeoutError } from 'rxjs';
 import { map, tap, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { NotificationsService } from './notifications.service';
@@ -15,6 +15,8 @@ import { NotificationsService } from './notifications.service';
   providedIn: 'root',
 })
 export class ApiClientService {
+  readonly loading$ = new BehaviorSubject<number>(0);
+
   constructor(
     private notificationsService: NotificationsService,
     private http: HttpClient
@@ -56,6 +58,7 @@ export class ApiClientService {
       responseType: 'json',
       headers,
     });
+    this.incrementLoading();
     this.http
       .request<T>(request)
       .pipe(
@@ -64,7 +67,16 @@ export class ApiClientService {
         map((e) => e as HttpResponse<T>)
       )
       .subscribe(
-        (data) => (then ? then(data.body) : () => {}),
+        (data) => {
+          try {
+            if (then != null) {
+              then(data.body);
+            }
+          } catch (error) {
+            console.error(error);
+            this.notificationsService.error(String(error));
+          }
+        },
         (error) => {
           console.error(error);
           if (error instanceof TimeoutError) {
@@ -72,8 +84,15 @@ export class ApiClientService {
           } else {
             this.notificationsService.error(`${error.message}`);
           }
-        }
+        },
+        () => this.decrementLoading()
       );
+  }
+  private incrementLoading() {
+    this.loading$.next(this.loading$.getValue() + 1);
+  }
+  private decrementLoading() {
+    this.loading$.next(this.loading$.getValue() - 1);
   }
 }
 
